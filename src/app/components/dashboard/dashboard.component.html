@@ -1,0 +1,64 @@
+<nav>
+    <div class="nav-wrapper blue-grey darken-1">
+        <a href="#" class="brand-logo">Bucket List App >> Dashboard</a>
+        <ul id="nav-mobile" class="right hide-on-med-and-down">
+            <li><a href="/">Log Out</a></li>
+        </ul>
+    </div>
+</nav>
+
+<div class="container">
+
+    <div class="row">
+        <form (ngSubmit)="newBucket()" #BucketForm="ngForm">
+            <div class="form-group input-field col s6">
+                <input id="bucket" type="text" required [(ngModel)]="bucket" name="bucket" class="form-control validate">
+                <label for="bucket">New Bucket List</label>
+            </div>
+        </form>
+        <form (ngSubmit)="onSubmit()" #bucketForm="ngForm">
+            <div class="form-group input-field col s5">
+                <input id="search" type="text" required [(ngModel)]="search" name="search" class="form-control validate">
+                <label for="search"><i class="material-icons left">search</i>Search Bucket Lists</label>
+            </div>
+            <div class="form-group input-field col s1 ">
+                <input id="limit" type="text" required [(ngModel)]="limit" name="limit" class="form-control validate">
+                <label for="limit">Limit</label>
+            </div>
+        </form>
+      
+    </div>
+    
+    <div class="row">
+
+        <div *ngFor="let key of keys;">
+
+            <div class="col s4">
+                <div class="card blue-grey darken-1">
+                    <div class="card-content white-text">
+                        <span class="card-title">{{bucketResponse.bucketlists[key].name}}</span>
+                        <span class = "bId" id = "bucketId{{key}}">{{bucketResponse.bucketlists[key].id}}</span>
+                        <p><a routerLink="/dashboard">+ Add item</a></p><hr />
+                        <p><a routerLink="/dashboard">+ View items</a></p>
+                    </div>
+                    <div class="card-action">
+                        <a routerLink="/dashboard">Update</a>
+                        <a (click)="deleteBucket(key)" href="javascript:void(0)" >Delete</a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <ul class="pagination">
+        <li class="disabled"><a href="javascript: void(0)"><i class="material-icons">chevron_left</i></a></li>
+        <li class="active"><a href="javascript: void(0)">1</a></li>
+        <li class="waves-effect"><a href="javascript: void(0)">2</a></li>
+        <li class="waves-effect"><a href="javascript: void(0)">3</a></li>
+        <li class="waves-effect"><a href="javascript: void(0)">4</a></li>
+        <li class="waves-effect"><a href="javascript: void(0)">5</a></li>
+        <li class="waves-effect"><a href="javascript: void(0)"><i class="material-icons">chevron_right</i></a></li>
+    </ul>
+</div>

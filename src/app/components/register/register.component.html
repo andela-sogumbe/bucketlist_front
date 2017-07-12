@@ -1,0 +1,38 @@
+<nav>
+    <div class="nav-wrapper blue-grey darken-1">
+        <a href="#" class="brand-logo">Bucket List App >> Register</a>
+        <ul id="nav-mobile" class="right hide-on-med-and-down">
+        <li><a href="/">Log Out</a></li>
+        </ul>
+    </div>
+</nav>
+<div class="container">
+    <div class="row">
+        <form (ngSubmit)="onSubmit()" #regForm="ngForm" class="col s12">
+            <div class="row">
+                <div class="form-group input-field col s7 offset-s2">
+                <input id="name" type="text" required [(ngModel)]="name" name="name" class="form-control validate">
+                <label for="name">Name</label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group input-field col s7 offset-s2">
+                <input id="email" type="text" required [(ngModel)]="email" name="email" class="form-control validate">
+                <label for="email">Email</label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group input-field col s7 offset-s2">
+                <input id="password" type="password" required [(ngModel)]="password" name="password" class="form-control validate">
+                <label for="password">Password</label>
+                </div>
+            </div>
+            <div class="row">
+                <button class="btn waves-effect waves-light blue-grey darken-1 col s3 offset-s2" (click)="redirectPage()" type="button" name="action">Login</button>
+                <button [disabled]="!regForm.form.valid" class="btn waves-effect waves-light blue-grey darken-1 col s3 offset-s1" type="submit" name="action">Submit
+                    <i class="material-icons right">send</i>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
