@@ -1,0 +1,38 @@
+<div *ngFor="let key of keys;">
+    <div class="col s4">
+        <div class="card blue-grey darken-1">
+            <div class="card-content white-text">
+                <span class="card-title">{{bucketResponse.bucketlists[key].name}}</span>
+                <span>ID: </span>
+                <span class = "bId" id = "bucketId{{key}}">{{bucketResponse.bucketlists[key].id}}</span><hr />
+                <p><a (click)="setId(key)" href="#newitemmodal">Add item</a></p><hr />
+                <p><a (click)="setId(key);viewItems(key);"href="#viewitemsmodal"> View items</a></p>
+                <div id = "item{{key}}data" class="itemdata">
+                    <table class="bordered striped">
+                        <thead>
+                        <tr>
+                            <th>Item Name</th>
+                            <th>Done</th>
+                            <th>Edit</th>
+                            <th>Delete</th>
+                        </tr>
+                        </thead>
+
+                        <tbody>
+                        <tr *ngFor="let item of bucketResponse.bucketlists[key].items">
+                            <td>{{item.name}}</td>
+                            <td>{{item.done}}</td>
+                            <td><a (click)="editItem(item.id)"><i class="material-icons">edit</i></a></td>
+                            <td><a (click)="deleteItem(item.id)"><i class="material-icons">delete</i></a></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="card-action">
+                <a routerLink="/dashboard">Update</a>
+                <a (click)="deleteBucket(key)" href="javascript:void(0)" >Delete</a>
+            </div>
+        </div>
+    </div>
+</div>

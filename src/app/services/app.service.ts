@@ -12,6 +12,19 @@ export class AuthService{
 
     constructor(private http: Http){}
 
+    // check if a user is logged in
+    authLoggedIn(token: string){
+
+        let headers = new Headers({ 'Content-Type': 'application/json' });
+        headers.append('Authorization', 'Bearer ' + token);
+        let options = new RequestOptions({ headers: headers });
+        return this.http.post(this.url + 'loggedin/', JSON.stringify({'auth': '1'}), options)
+            .map(response => response.json())
+            .catch(errors => { 
+                return Observable.throw(errors.json())
+            });
+    }
+
     // authenticate registered user
     authLogin(email:string, password:string){
         let headers = new Headers({ 'Content-Type': 'application/json' });
@@ -26,7 +39,10 @@ export class AuthService{
     
     // add user to user table in the database
     authRegister(name:string, email:string, password:string){
-        return this.http.post(this.url + 'register/', JSON.stringify({name, email, password}))
+        let headers = new Headers({ 'Content-Type': 'application/json' });
+        let options = new RequestOptions({ headers: headers });
+        return this.http.post(this.url + 'register/',
+        JSON.stringify({"name": name, "email": email, "password": password}), options)
             .map(response => response.json())
             .catch(errors => { 
                 return Observable.throw(errors.json())
@@ -67,18 +83,13 @@ export class BucketService{
             });
     }
 
-    // get single bucket list
-    getSingleBucket(bucketId:number){
-        return this.http.get(this.url + bucketId)
-            .map(response => response.json())
-            .catch(errors => { 
-                return Observable.throw(errors.json())
-            });
-    }
-
     // update bucket list
     updateBucket(bucketId:number, name:string){
-        return this.http.put(this.url + bucketId, JSON.stringify({name}))
+        let token = localStorage.getItem('current_user');
+        let headers = new Headers({ 'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + token});
+        let options = new RequestOptions({ headers: headers });
+        return this.http.put(this.url + bucketId, JSON.stringify({name}), options)
             .map(response => response.json())
             .catch(errors => { 
                 return Observable.throw(errors.json())
@@ -99,8 +110,13 @@ export class BucketService{
     }
 
     // get bucket lists with names containing the value of 'q'
-    searchBucket(name:string){
-        return this.http.get(this.url +'?q=' + name)
+    searchBucket(search, limit){
+        let limits = limit || 0;
+        let token = localStorage.getItem('current_user');
+        let headers = new Headers({ 'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + token});
+        let options = new RequestOptions({ headers: headers });
+        return this.http.get(this.url +'?q=' + search + "&limit=" + limits, options)
             .map(response => response.json())
             .catch(errors => { 
                 return Observable.throw(errors.json())
@@ -117,7 +133,11 @@ export class ItemService{
 
     // create bucket list item
     createItem(bucketId:number, name:string){
-        this.http.post(this.url + bucketId + '/items/', JSON.stringify({name}))
+        let token = localStorage.getItem('current_user');
+        let headers = new Headers({ 'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + token});
+        let options = new RequestOptions({ headers: headers });
+        return this.http.post(this.url + bucketId + '/items/', JSON.stringify({"name":name}), options)
             .map(response => response.json())
             .catch(errors => { 
                 return Observable.throw(errors.json())
@@ -126,7 +146,11 @@ export class ItemService{
 
     // create bucket list item
     updateItem(bucketId:number, itemId:number, name:string){
-        this.http.put(this.url + bucketId + '/items/' + itemId, JSON.stringify({name}))
+        let token = localStorage.getItem('current_user');
+        let headers = new Headers({ 'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + token});
+        let options = new RequestOptions({ headers: headers });
+        return this.http.put(this.url + bucketId + '/items/' + itemId, JSON.stringify({"name":name}), options)
             .map(response => response.json())
             .catch(errors => { 
                 return Observable.throw(errors.json())
@@ -135,7 +159,11 @@ export class ItemService{
 
     // delete bucket list item
     deleteItem(bucketId:number, itemId:number){
-        this.http.delete(this.url + bucketId + '/items/' + itemId)
+        let token = localStorage.getItem('current_user');
+        let headers = new Headers({ 'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + token});
+        let options = new RequestOptions({ headers: headers });
+        return this.http.delete(this.url + bucketId + '/items/' + itemId, options)
             .map(response => response.json())
             .catch(errors => { 
                 return Observable.throw(errors.json())

@@ -3,6 +3,9 @@ nav {
     line-height: 50px;
     margin-bottom: 20px;
 }
+.container{
+    width: 1100px;
+}
 
 nav a{
     font-size: 16px;
@@ -13,6 +16,12 @@ nav a{
     color: #ffab40;
 }
 
-.row .bId{
+.itemdata{
+    display: none;
+}
+
+#viewitemsmodal { width: 60% !important ; height: 65% !important ; }
+
+#search-submit{
     display: none;
 }

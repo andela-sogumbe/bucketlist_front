@@ -2,7 +2,7 @@
     <div class="nav-wrapper blue-grey darken-1">
         <a href="#" class="brand-logo">Bucket List App >> Dashboard</a>
         <ul id="nav-mobile" class="right hide-on-med-and-down">
-            <li><a href="/">Log Out</a></li>
+            <li><a (click)="logOutUser()" routerLink="/login">Log Out</a></li>
         </ul>
     </div>
 </nav>
@@ -12,44 +12,97 @@
     <div class="row">
         <form (ngSubmit)="newBucket()" #BucketForm="ngForm">
             <div class="form-group input-field col s6">
-                <input id="bucket" type="text" required [(ngModel)]="bucket" name="bucket" class="form-control validate">
+                <input id="bucket" type="text" autocomplete="off" required [(ngModel)]="bucket" name="bucket" class="form-control validate">
                 <label for="bucket">New Bucket List</label>
             </div>
         </form>
-        <form (ngSubmit)="onSubmit()" #bucketForm="ngForm">
+        <form (ngSubmit)="searchBuckets()" #searchForm="ngForm">
             <div class="form-group input-field col s5">
-                <input id="search" type="text" required [(ngModel)]="search" name="search" class="form-control validate">
+                <input id="search" (keyup)="searchBuckets()" type="text" autocomplete="off" [(ngModel)]="search" name="search" class="form-control validate">
                 <label for="search"><i class="material-icons left">search</i>Search Bucket Lists</label>
             </div>
             <div class="form-group input-field col s1 ">
-                <input id="limit" type="text" required [(ngModel)]="limit" name="limit" class="form-control validate">
+                <input id="limit" type="text" autocomplete="off" [(ngModel)]="limit" name="limit" class="form-control validate">
                 <label for="limit">Limit</label>
             </div>
+            <input type="submit" id="search-submit" name="search-submit">
         </form>
       
     </div>
     
-    <div class="row">
+    <div *ngIf="bucketResponse">
 
-        <div *ngFor="let key of keys;">
+        <div class="row bucket-container">
+            <div *ngFor="let key of keys;">
+                <div class="col s4">
+                    <div class="card blue-grey darken-1">
+                        <div class="card-content white-text">
+                            <span class="card-title">{{bucketResponse.bucketlists[key].name}}</span>
+                            <span>ID: </span>
+                            <span class = "bId" id = "bucketId{{key}}">{{bucketResponse.bucketlists[key].id}}</span><hr />
+                            <p><a (click)="setId(key)" href="#newitemmodal">Add item</a></p><hr />
+                            <p><a (click)="setId(key);viewItems(key);"href="#viewitemsmodal"> View items</a></p>
+                            <div id = "item{{key}}data" class="itemdata">
+                                <table class="bordered striped">
+                                    <thead>
+                                    <tr>
+                                        <th>Item Name</th>
+                                        <th>Done</th>
+                                        <th>Edit</th>
+                                        <th>Delete</th>
+                                    </tr>
+                                    </thead>
 
-            <div class="col s4">
-                <div class="card blue-grey darken-1">
-                    <div class="card-content white-text">
-                        <span class="card-title">{{bucketResponse.bucketlists[key].name}}</span>
-                        <span class = "bId" id = "bucketId{{key}}">{{bucketResponse.bucketlists[key].id}}</span>
-                        <p><a routerLink="/dashboard">+ Add item</a></p><hr />
-                        <p><a routerLink="/dashboard">+ View items</a></p>
-                    </div>
-                    <div class="card-action">
-                        <a routerLink="/dashboard">Update</a>
-                        <a (click)="deleteBucket(key)" href="javascript:void(0)" >Delete</a>
+                                    <tbody>
+                                    <tr *ngFor="let item of bucketResponse.bucketlists[key].items">
+                                        <td>{{item.name}}</td>
+                                        <td>{{item.done}}</td>
+                                        <td><a (click)="editItem(item.id)"><i class="material-icons">edit</i></a></td>
+                                        <td><a (click)="deleteItem(item.id)"><i class="material-icons">delete</i></a></td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="card-action">
+                            <a routerLink="/dashboard">Update</a>
+                            <a (click)="deleteBucket(key)" href="javascript:void(0)" >Delete</a>
+                        </div>
                     </div>
                 </div>
             </div>
-
         </div>
+    </div>
 
+    <!-- New Item Modal -->
+    <div id="newitemmodal" class="modal">
+        <div class="modal-content">
+            <h5>Add Items</h5>
+            <div id="newitemcontent">
+                <form (ngSubmit)="createItem()" #newItemForm="ngForm">
+                    <div class="form-group input-field col s5">
+                        <input id="itemName" type="text" autocomplete="off" required [(ngModel)]="itemName" name="itemName" class="form-control validate">
+                        <label for="newItem">New Item Name</label>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <a routerLink="/dashboard" class="modal-action modal-close waves-effect waves-green btn-flat">Close</a>
+        </div>
+    </div>
+
+     <!-- View Items Modal -->
+    <div id="viewitemsmodal" class="modal">
+        <div class="modal-content">
+            <h4>View Items</h4>
+            <div id="viewitemscontent">
+
+            </div>
+        </div>
+        <div class="modal-footer">
+            <a routerLink="/dashboard" class="modal-action modal-close waves-effect waves-green btn-flat">Close</a>
+        </div>
     </div>
 
     <ul class="pagination">

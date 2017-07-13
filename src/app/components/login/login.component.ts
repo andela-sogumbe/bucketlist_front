@@ -1,6 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, AfterViewInit, OnInit } from '@angular/core';
 import {Router} from '@angular/router';
-import { AuthService } from '../../services/app.service'
+import { AuthService } from '../../services/app.service';
+
+declare var jQuery: any;
+declare var Materialize: any;
 
 @Component({
   selector: 'login',
@@ -9,14 +12,30 @@ import { AuthService } from '../../services/app.service'
   providers: [AuthService]
 })
 
-export class LoginComponent {
+export class LoginComponent  implements AfterViewInit, OnInit{
   email: string;
   password: string;
   token: string;
   authResponse: loginResponse;
+  errorMessages: string;
 
   constructor(private router: Router, private authService: AuthService){
+    
+  }
 
+  // after all components have been loaded execute jquery
+  ngAfterViewInit(){
+    jQuery(document).ready(function(){
+      //jquery code here
+    });
+  }
+
+  // on page load authenticate user
+  ngOnInit(){
+    let login_status = localStorage.getItem('login_status');
+    if(login_status == "1"){
+      this.router.navigate(['/dashboard']);
+    } 
   }
 
   redirectPage(){
@@ -25,15 +44,19 @@ export class LoginComponent {
     return false;
   }
 
-  onSubmit() {
+  loginUser() {
     this.authService.authLogin(this.email, this.password).subscribe(response => {
       this.authResponse = response;
-      if(this.authResponse.user_token.length > 0){
+      if(this.authResponse.user_token != ''){
           localStorage.setItem('current_user', this.authResponse.user_token);
+          localStorage.setItem('login_status', '1');
           this.router.navigate(['/dashboard']);
       }
       else{
         localStorage.setItem('current_user', '');
+        localStorage.setItem('login_status', '0');
+        this.errorMessages = JSON.stringify(this.authResponse.messages).replace(/[\]}"{[]/g, '')
+        Materialize.toast(this.errorMessages, 5000);
       }
     })
   }
