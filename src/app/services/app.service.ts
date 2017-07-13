@@ -111,7 +111,7 @@ export class BucketService{
 
     // get bucket lists with names containing the value of 'q'
     searchBucket(search, limit){
-        let limits = limit || 0;
+        let limits = limit || 20;
         let token = localStorage.getItem('current_user');
         let headers = new Headers({ 'Content-Type': 'application/json',
         'Authorization': 'Bearer ' + token});

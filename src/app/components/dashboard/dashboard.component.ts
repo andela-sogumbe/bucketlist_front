@@ -12,6 +12,9 @@ declare var Materialize: any;
   providers: [BucketService, AuthService, ItemService]
 })
 export class DashboardComponent implements AfterViewInit, OnInit{
+  loader = true;
+  searchBucketLists = false;
+  listBucketsLists = true;
   search: string;
   bucket: string;
   limit: string;
@@ -20,9 +23,9 @@ export class DashboardComponent implements AfterViewInit, OnInit{
   bucketId: number;
   errorMessages: string;
   itemName: string;
+  bucketsHtml: string;
 
   constructor(private router: Router, private itemService: ItemService, private bucketService: BucketService, private authService: AuthService){
-    
   }
 
   // after all components have been loaded execute jquery
@@ -48,6 +51,12 @@ export class DashboardComponent implements AfterViewInit, OnInit{
       this.bucketResponse = response;
       if(this.bucketResponse.bucketlists){
         this.keys = Object.keys(this.bucketResponse.bucketlists)
+        this.loader = false;
+      }
+      if(JSON.stringify(this.bucketResponse.messages).replace(/[\]}"_{[]/g, ' ').includes('Access Denied')){
+        localStorage.setItem('current_user', '');
+        localStorage.setItem('login_status', '0');
+        this.router.navigate(['/login'])
       }
       Materialize.toast(JSON.stringify(this.bucketResponse.messages).replace(/[\]}"_{[]/g, ' '), 5000)
     })
@@ -56,15 +65,21 @@ export class DashboardComponent implements AfterViewInit, OnInit{
 
   // search for bucket list name or id
   searchBuckets(){
-    this.bucketService.searchBucket(this.search, this.limit).subscribe(response => {
-      this.bucketResponse = response;
-      if(this.bucketResponse.messages == "list_success"){
-        this.router.navigate(['/dashboard']);
-        this.bucketResponse = response;
-      }else{
-        this.errorMessages = JSON.stringify(this.bucketResponse.messages).replace(/[\]}"{[]/g, '')
-        Materialize.toast(this.errorMessages, 5000);
-      }
+    this.bucketService.searchBucket(this.search, this.limit).subscribe(
+      response => {
+        if(JSON.stringify(response.messages).includes("list_success")){
+          this.bucketResponse = response;
+          this.searchBucketLists = true;
+          this.listBucketsLists = false;
+          if(this.bucketResponse.bucketlists){
+            this.keys = Object.keys(this.bucketResponse.bucketlists)
+          }
+        }else{
+          Materialize.toast(JSON.stringify(response).replace(/[\]}"_{[]/g, ' '), 5000);
+        }
+    },
+    errors => {
+      Materialize.toast(JSON.stringify(errors).replace(/[\]}"_{[]/g, ' '), 5000);
     })
   }
 
@@ -79,6 +94,7 @@ export class DashboardComponent implements AfterViewInit, OnInit{
       this.bucketResponse = response;
       if(this.bucketResponse.messages == "create_success"){
         window.location.reload()
+        // Materialize.toast("Bucket list successfully created", 5000);
       }else{
         this.errorMessages = JSON.stringify(this.bucketResponse.messages).replace(/[\]}"{[]/g, '')
         Materialize.toast(this.errorMessages, 5000);

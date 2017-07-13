@@ -1,13 +1,19 @@
 <nav>
     <div class="nav-wrapper blue-grey darken-1">
-        <a href="#" class="brand-logo">Bucket List App >> Dashboard</a>
+        <a routerLink="/dashboard" class="brand-logo">Bucket List App >> Dashboard</a>
         <ul id="nav-mobile" class="right hide-on-med-and-down">
-            <li><a (click)="logOutUser()" routerLink="/login">Log Out</a></li>
+            <li><a routerLink="/dashboard">Account</a></li>
+            <li><a href="javascript:void(0)">|</a></li>
+            <li><a (click)="logOutUser()" routerLink="/login"> Log Out</a></li>
         </ul>
     </div>
 </nav>
 
 <div class="container">
+
+    <div *ngIf="loader" class="progress">
+        <div class="indeterminate"></div>
+    </div>
 
     <div class="row">
         <form (ngSubmit)="newBucket()" #BucketForm="ngForm">
@@ -18,11 +24,11 @@
         </form>
         <form (ngSubmit)="searchBuckets()" #searchForm="ngForm">
             <div class="form-group input-field col s5">
-                <input id="search" (keyup)="searchBuckets()" type="text" autocomplete="off" [(ngModel)]="search" name="search" class="form-control validate">
-                <label for="search"><i class="material-icons left">search</i>Search Bucket Lists</label>
+                <input id="search" type="text" (keyup)="searchBuckets()" autocomplete="off" [(ngModel)]="search" name="search" class="form-control validate">
+                <label for="search">Search Bucket Lists</label>
             </div>
             <div class="form-group input-field col s1 ">
-                <input id="limit" type="text" autocomplete="off" [(ngModel)]="limit" name="limit" class="form-control validate">
+                <input id="limit" type="text" (keyup)="searchBuckets()" autocomplete="off" [(ngModel)]="limit" name="limit" class="form-control validate">
                 <label for="limit">Limit</label>
             </div>
             <input type="submit" id="search-submit" name="search-submit">
@@ -31,42 +37,86 @@
     </div>
     
     <div *ngIf="bucketResponse">
+            <div *ngIf="searchBucketLists">
+            <div class="row">
+                <div *ngFor="let key of keys" class="bucketsInFor">
+                    <div class="col s4">
+                        <div class="card blue-grey darken-1">
+                            <div class="card-content white-text">
+                                <span class="card-title">{{bucketResponse.bucketlists[key].name}}</span>
+                                <span>ID: </span>
+                                <span class = "bId" id = "bucketId{{key}}">{{bucketResponse.bucketlists[key].id}}</span><hr />
+                                <p><a (click)="setId(key)" href="#newitemmodal">Add item</a></p><hr />
+                                <p><a (click)="setId(key);viewItems(key);"href="#viewitemsmodal"> View items</a></p>
+                                <div id = "item{{key}}data" class="itemdata">
+                                    <table class="bordered striped">
+                                        <thead>
+                                        <tr>
+                                            <th>Item Name</th>
+                                            <th>Done</th>
+                                            <th>Edit</th>
+                                            <th>Delete</th>
+                                        </tr>
+                                        </thead>
 
-        <div class="row bucket-container">
-            <div *ngFor="let key of keys;">
-                <div class="col s4">
-                    <div class="card blue-grey darken-1">
-                        <div class="card-content white-text">
-                            <span class="card-title">{{bucketResponse.bucketlists[key].name}}</span>
-                            <span>ID: </span>
-                            <span class = "bId" id = "bucketId{{key}}">{{bucketResponse.bucketlists[key].id}}</span><hr />
-                            <p><a (click)="setId(key)" href="#newitemmodal">Add item</a></p><hr />
-                            <p><a (click)="setId(key);viewItems(key);"href="#viewitemsmodal"> View items</a></p>
-                            <div id = "item{{key}}data" class="itemdata">
-                                <table class="bordered striped">
-                                    <thead>
-                                    <tr>
-                                        <th>Item Name</th>
-                                        <th>Done</th>
-                                        <th>Edit</th>
-                                        <th>Delete</th>
-                                    </tr>
-                                    </thead>
-
-                                    <tbody>
-                                    <tr *ngFor="let item of bucketResponse.bucketlists[key].items">
-                                        <td>{{item.name}}</td>
-                                        <td>{{item.done}}</td>
-                                        <td><a (click)="editItem(item.id)"><i class="material-icons">edit</i></a></td>
-                                        <td><a (click)="deleteItem(item.id)"><i class="material-icons">delete</i></a></td>
-                                    </tr>
-                                    </tbody>
-                                </table>
+                                        <tbody>
+                                        <tr *ngFor="let item of bucketResponse.bucketlists[key].items">
+                                            <td>{{item.name}}</td>
+                                            <td>{{item.done}}</td>
+                                            <td><a (click)="editItem(item.id)"><i class="material-icons">edit</i></a></td>
+                                            <td><a (click)="deleteItem(item.id)"><i class="material-icons">delete</i></a></td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="card-action">
+                                <a routerLink="/dashboard">Update</a>
+                                <a (click)="deleteBucket(key)" href="javascript:void(0)" >Delete</a>
                             </div>
                         </div>
-                        <div class="card-action">
-                            <a routerLink="/dashboard">Update</a>
-                            <a (click)="deleteBucket(key)" href="javascript:void(0)" >Delete</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div *ngIf="listBucketsLists">
+                <div *ngFor="let key of keys" class="bucketsInFor">
+                    <div class="col s4">
+                        <div class="card blue-grey darken-1">
+                            <div class="card-content white-text">
+                                <span class="card-title">{{bucketResponse.bucketlists[key].name}}</span>
+                                <span>ID: </span>
+                                <span class = "bId" id = "bucketId{{key}}">{{bucketResponse.bucketlists[key].id}}</span><hr />
+                                <p><a (click)="setId(key)" href="#newitemmodal">Add item</a></p><hr />
+                                <p><a (click)="setId(key);viewItems(key);"href="#viewitemsmodal"> View items</a></p>
+                                <div id = "item{{key}}data" class="itemdata">
+                                    <table class="bordered striped">
+                                        <thead>
+                                        <tr>
+                                            <th>Item Name</th>
+                                            <th>Done</th>
+                                            <th>Edit</th>
+                                            <th>Delete</th>
+                                        </tr>
+                                        </thead>
+
+                                        <tbody>
+                                        <tr *ngFor="let item of bucketResponse.bucketlists[key].items">
+                                            <td>{{item.name}}</td>
+                                            <td>{{item.done}}</td>
+                                            <td><a (click)="editItem(item.id)"><i class="material-icons">edit</i></a></td>
+                                            <td><a (click)="deleteItem(item.id)"><i class="material-icons">delete</i></a></td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="card-action">
+                                <a routerLink="/dashboard">Update</a>
+                                <a (click)="deleteBucket(key)" href="javascript:void(0)" >Delete</a>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -106,12 +156,12 @@
     </div>
 
     <ul class="pagination">
-        <li class="disabled"><a href="javascript: void(0)"><i class="material-icons">chevron_left</i></a></li>
+        <li class="disabled"><a href="javascript: void(0)"> < </a></li>
         <li class="active"><a href="javascript: void(0)">1</a></li>
         <li class="waves-effect"><a href="javascript: void(0)">2</a></li>
         <li class="waves-effect"><a href="javascript: void(0)">3</a></li>
         <li class="waves-effect"><a href="javascript: void(0)">4</a></li>
         <li class="waves-effect"><a href="javascript: void(0)">5</a></li>
-        <li class="waves-effect"><a href="javascript: void(0)"><i class="material-icons">chevron_right</i></a></li>
+        <li class="waves-effect"><a href="javascript: void(0)"> > </a></li>
     </ul>
 </div>
