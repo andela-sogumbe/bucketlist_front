@@ -3,13 +3,12 @@ import {Routes, RouterModule} from '@angular/router';
 
 import { RegisterComponent } from './components/register/register.component';
 import { LoginComponent } from './components/login/login.component';
-import { ItemsComponent } from './components/items/items.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 
 const appRoutes: Routes = [
     {
         path: '',
-        component: LoginComponent,
+        component: DashboardComponent,
     },
     {
         path: 'dashboard',
@@ -22,10 +21,6 @@ const appRoutes: Routes = [
     {
         path: 'register',
         component: RegisterComponent
-    },
-    {
-        path: 'items',
-        component: ItemsComponent
     }
 ]
 
