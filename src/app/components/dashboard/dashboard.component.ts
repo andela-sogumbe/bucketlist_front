@@ -199,7 +199,7 @@ export class DashboardComponent implements AfterViewInit, OnInit{
   }
 
   // update bucket list name
-  updateBucket(key){
+  updateBucket(){
     this.bucketService.updateBucket(this.bucketId, this.bucketName).subscribe(response => {
       this.bucketResponse = response;
       if(JSON.stringify(this.bucketResponse.messages).includes('Access Denied')){
