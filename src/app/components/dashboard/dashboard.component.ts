@@ -11,27 +11,41 @@ declare var Materialize: any;
   styleUrls: ['./dashboard.component.css'],
   providers: [BucketService, AuthService, ItemService]
 })
+
 export class DashboardComponent implements AfterViewInit, OnInit{
+  
   loader = true;
-  searchBucketLists = false;
   listBucketsLists = true;
-  search: string;
+  search = "";
   bucket: string;
-  limit: string;
+  limit = 10;
   bucketResponse: bucketResponse;
   keys: string[];
   bucketId: number;
   errorMessages: string;
   itemName: string;
+  bucketName: string;
   bucketsHtml: string;
+  userId: number;
+  username: string;
+  useremail: string;
+  useroldpassword: string;
+  userpassword: string;
+  userconfirmpassword: string;
+  itemNames: any[] = [];
 
-  constructor(private router: Router, private itemService: ItemService, private bucketService: BucketService, private authService: AuthService){
-  }
+  // initialize global variables
+  constructor(private router: Router, private itemService: ItemService, private bucketService: BucketService, private authService: AuthService){}
 
   // after all components have been loaded execute jquery
   ngAfterViewInit(){
     jQuery(document).ready(function(){
       jQuery('.modal').modal();
+      jQuery('#bucketName').keyup(function(e) {
+        if(e.which == 13) {
+            jQuery('#updatebucketlistmodal').modal('close');
+        }
+      });
       jQuery('#newItem').keyup(function(e) {
         if(e.which == 13) {
             jQuery('#newitemmodal').modal('close');
@@ -42,50 +56,74 @@ export class DashboardComponent implements AfterViewInit, OnInit{
 
   // on page load authenticate user and get all buckets
   ngOnInit(){
+    
     let login_status = localStorage.getItem('login_status');
+    
     if(login_status != "1"){
       this.router.navigate(['/login']);
       return false;
     }else{
-      this.bucketService.getAllBuckets().subscribe(response => {
-      this.bucketResponse = response;
-      if(this.bucketResponse.bucketlists){
-        this.keys = Object.keys(this.bucketResponse.bucketlists)
-        this.loader = false;
+      this.loader = false;
+      if(this.getPaginatedBuckets(1)){
+        if(JSON.stringify(this.bucketResponse.messages).replace(/[\]}"_{[]/g, ' ').includes('Access Denied')){
+          localStorage.setItem('current_user', '');
+          localStorage.setItem('login_status', '0');
+          this.router.navigate(['/login'])
+        }
+      }else{
+        // Materialize.toast(JSON.stringify(this.bucketResponse.messages).replace(/[\]'_}"{[]/g, ' '), 5000);
       }
-      if(JSON.stringify(this.bucketResponse.messages).replace(/[\]}"_{[]/g, ' ').includes('Access Denied')){
-        localStorage.setItem('current_user', '');
-        localStorage.setItem('login_status', '0');
-        this.router.navigate(['/login'])
+    }
+
+    this.getUserDetails()
+
+  }
+
+  // get user details 
+  getUserDetails(){
+    this.authService.authGetUser().subscribe(response => {
+
+      if(response.messages == 'user exists'){
+        this.userId = response.id;
+        this.username = response.name;
+        this.useremail = response.email;
+        
+        jQuery(document).ready(function(){
+          Materialize.updateTextFields();
+        });
+
       }
-      Materialize.toast(JSON.stringify(this.bucketResponse.messages).replace(/[\]}"_{[]/g, ' '), 5000)
+
+    }, errors => {
+        Materialize.toast("Error connecting to the database", 5000);
+    })
+  }
+  
+  // edit user details
+  editUser(){
+
+    if(this.userconfirmpassword != this.userpassword){
+      Materialize.toast(JSON.stringify("Passwords do not match"), 5000);
+    }else{
+        this.authService.authEditUser(
+        this.userId,
+        this.username,
+        this.useremail,
+        this.userpassword,
+        this.useroldpassword).subscribe(response => {
+          Materialize.toast(JSON.stringify(response.messages).replace(/[\]}"{[]/g, ''), 5000);
+          return false
+        }, errors => {
+        Materialize.toast("Error connecting to the database", 5000);
     })
     }
   }
 
-  // search for bucket list name or id
-  searchBuckets(){
-    this.bucketService.searchBucket(this.search, this.limit).subscribe(
-      response => {
-        if(JSON.stringify(response.messages).includes("list_success")){
-          this.bucketResponse = response;
-          this.searchBucketLists = true;
-          this.listBucketsLists = false;
-          if(this.bucketResponse.bucketlists){
-            this.keys = Object.keys(this.bucketResponse.bucketlists)
-          }
-        }else{
-          Materialize.toast(JSON.stringify(response).replace(/[\]}"_{[]/g, ' '), 5000);
-        }
-    },
-    errors => {
-      Materialize.toast(JSON.stringify(errors).replace(/[\]}"_{[]/g, ' '), 5000);
-    })
-  }
-
-  // set the bucket list id of the item to be created
-  setId(key){
-    this.bucketId = jQuery('#bucketId' + key).html()
+  // log out user
+  logOutUser(){
+    localStorage.setItem('login_status', '0');
+    localStorage.setItem('current_user', '');
+    this.router.navigate(['/login']);
   }
 
   // create new bucket
@@ -99,21 +137,89 @@ export class DashboardComponent implements AfterViewInit, OnInit{
         this.errorMessages = JSON.stringify(this.bucketResponse.messages).replace(/[\]}"{[]/g, '')
         Materialize.toast(this.errorMessages, 5000);
       }
+    }, errors => {
+        Materialize.toast("Error connecting to the database", 5000);
     })
+  }
+
+  // search for bucket list name or id
+  searchBuckets(){
+    if(typeof this.search === "undefined"){
+      this.search = ""
+    }
+    this.bucketService.searchBucket(this.search, this.limit).subscribe(
+      response => {
+        if(JSON.stringify(response.messages).includes("list_success")){
+          this.bucketResponse = response;
+          if(this.bucketResponse.bucketlists.length > 0){
+            this.keys = Object.keys(this.bucketResponse.bucketlists)
+          }else{
+            Materialize.toast(this.search + " not found", 5000);
+          }
+          
+        }else{
+          Materialize.toast(JSON.stringify(response).replace(/[\]}"_{[]/g, ' '), 5000);
+        }
+    },
+    errors => {
+      Materialize.toast("Error connecting to the database", 5000);
+    })
+  }
+
+  getPaginatedBuckets(page){
+    this.bucketService.getAllBuckets(page, this.limit, this.search).subscribe(response => {
+      this.bucketResponse = response;
+      if(this.bucketResponse.bucketlists){
+        this.keys = Object.keys(this.bucketResponse.bucketlists)
+        if(!this.bucketResponse.messages.includes("list_success")){
+          Materialize.toast(this.bucketResponse.messages, 5000)
+          return false;
+        }else{
+          jQuery(document).ready(function(){
+            Materialize.updateTextFields();
+          });
+          return true;
+        }
+      }
+    }, errors => {
+        Materialize.toast("Error connecting to the database", 5000);
+    })
+  }
+
+  // set the bucket list id of the item to be created
+  setId(key){
+    this.bucketId = jQuery('#bucketId' + key).html()
+  }
+
+  // update bucket list name
+  updateBucket(key){
+    this.bucketService.updateBucket(this.bucketId, this.bucketName).subscribe(response => {
+      Materialize.toast(JSON.stringify(response.messages), 5000);
+    }, errors => {
+        Materialize.toast("Error connecting to the database", 5000);
+    });
   }
 
   // delete bucket
   deleteBucket(key){
-    this.bucketId = jQuery('#bucketId' + key).html()
-    this.bucketService.deleteBucket(this.bucketId).subscribe(response => {
-      this.bucketResponse = response;
+    this.bucketId = jQuery('#bucketId' + key).html();
+    if(confirm('Are you sure you want to delete bucket list id: ' + this.bucketId)){
+      this.bucketService.deleteBucket(this.bucketId).subscribe(response => {
+        let index = this.bucketResponse.bucketlists.indexOf(this.bucketResponse.bucketlists[key])
+        this.bucketResponse.bucketlists.splice(index)
+        this.keys = Object.keys(this.bucketResponse.bucketlists)
       if(this.bucketResponse.messages == "delete_single_success"){
-        window.location.reload()
-      }else{
+        //window.location.reload()
+      }
+      else{
         this.errorMessages = JSON.stringify(this.bucketResponse.messages).replace(/[\]}"{[]/g, '')
         Materialize.toast(this.errorMessages, 5000);
-      }
+        }
+      }, errors => {
+        Materialize.toast("Error connecting to the database", 5000);
     })
+
+    }
   }
 
   // create item
@@ -126,18 +232,60 @@ export class DashboardComponent implements AfterViewInit, OnInit{
         this.errorMessages = JSON.stringify(this.bucketResponse.messages).replace(/[\]}"{[]/g, '')
         Materialize.toast(this.errorMessages, 5000);
       }
+    }, errors => {
+        Materialize.toast("Error connecting to the database", 5000);
     })
   }
 
   // view bucket list items
   viewItems(key){
-    jQuery('#viewitemscontent').html(jQuery('#item'+key+'data').html());
+
+    jQuery(document).ready(function(){
+      Materialize.updateTextFields();
+      jQuery('#viewitemsmodal' + key).modal('open');
+    });
   }
 
-  logOutUser(){
-    localStorage.setItem('login_status', '0');
-    localStorage.setItem('current_user', '');
-    this.router.navigate(['/login']);
+  // edit items
+  updateItems(key, iId, editedField, editedValue, event){
+    
+    if(editedValue.length == 0){
+      Materialize.toast("The name field cannot be empty", 5000);
+      event.preventDefault()
+    } 
+    
+    if(editedField == "done"){
+      if(event.target.checked){
+        editedValue = true;
+      }else{
+        editedValue = false;
+      }
+    }
+
+    if(event.which == 13 || event.type == "click") {
+      if(this.bucketResponse.bucketlists[key].items.length > 0){
+        this.itemService.updateItem(this.bucketId, iId, editedField, editedValue).subscribe(response => {
+          Materialize.toast(JSON.stringify(response.messages).replace(/[\]'_}"{[]/g, ' '), 5000);
+        }, errors => {
+        Materialize.toast("Error connecting to the database", 5000);
+    });
+      }
+    }   
+  }
+
+  // delete items
+  deleteItems(key, iId){
+    if(confirm("Are you sure you want to delete item id: " + iId)){
+      this.itemService.deleteItem(this.bucketId, iId).subscribe(response => {
+        let index = this.bucketResponse.bucketlists[key].items.indexOf(this.bucketResponse.bucketlists[key].items[iId])
+        this.bucketResponse.bucketlists[key].items.splice(index)
+        if(JSON.stringify(response.messages).replace(/[\]}"{[]/g, '').includes('delete_item_success'))
+        Materialize.toast("Item id: "+iId+" successfully deleted", 5000);
+      }, errors => {
+        Materialize.toast("Error connecting to the database", 5000);
+    });
+    }
+    
   }
 
 }
@@ -145,4 +293,5 @@ export class DashboardComponent implements AfterViewInit, OnInit{
 interface bucketResponse{
     messages;
     bucketlists;
+    pagination;
 }

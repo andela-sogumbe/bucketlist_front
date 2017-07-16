@@ -13,6 +13,39 @@ export class AuthService{
     constructor(private http: Http){}
 
     // check if a user is logged in
+    authEditUser(id:number, name:string, email:string, password:string, oldpassword:string){
+        let token = localStorage.getItem('current_user');
+        let headers = new Headers({ 'Content-Type': 'application/json' });
+        headers.append('Authorization', 'Bearer ' + token);
+        let options = new RequestOptions({ headers: headers });
+        let data = {
+            "id": id,
+            "name": name, 
+            "email": email, 
+            "password": password, 
+            "oldpassword": oldpassword
+        }
+        return this.http.post(this.url + 'edituser/', JSON.stringify(data), options)
+            .map(response => response.json())
+            .catch(errors => {
+                return Observable.throw(errors.json())
+            });
+    }
+
+    // check if a user is logged in
+    authGetUser(){
+        let token = localStorage.getItem('current_user');
+        let headers = new Headers({ 'Content-Type': 'application/json' });
+        headers.append('Authorization', 'Bearer ' + token);
+        let options = new RequestOptions({ headers: headers });
+        return this.http.post(this.url + 'getuser/', JSON.stringify({'auth': '1'}), options)
+            .map(response => response.json())
+            .catch(errors => { 
+                return Observable.throw(errors.json())
+            });
+    }
+
+    // check if a user is logged in
     authLoggedIn(token: string){
 
         let headers = new Headers({ 'Content-Type': 'application/json' });
@@ -71,12 +104,32 @@ export class BucketService{
     }
 
     // get all bucket lists
-    getAllBuckets(){
+    getAllBuckets(page, limit, search){
+        limit = limit || 10;
+        page = page || 1;
         let token = localStorage.getItem('current_user');
         let headers = new Headers({ 'Content-Type': 'application/json',
         'Authorization': 'Bearer ' + token});
         let options = new RequestOptions({ headers: headers });
-        return this.http.get(this.url, options)
+        return this.http.get(
+            this.url + "?page=" + page + "&limit=" + limit + "&q=" + search, options)
+            .map(response => response.json())
+            .catch(errors => { 
+                return Observable.throw(errors.json())
+            });
+    }
+
+    // get bucket lists with names containing the value of 'q'
+    searchBucket(search, limit){
+        if(/^[0-9]+$/.test(search)){
+            search = JSON.stringify(search);
+        }
+        limit = limit || 10;
+        let token = localStorage.getItem('current_user');
+        let headers = new Headers({ 'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + token});
+        let options = new RequestOptions({ headers: headers });
+        return this.http.get(this.url +'?q=' + search + "&limit=" + limit, options)
             .map(response => response.json())
             .catch(errors => { 
                 return Observable.throw(errors.json())
@@ -89,7 +142,7 @@ export class BucketService{
         let headers = new Headers({ 'Content-Type': 'application/json',
         'Authorization': 'Bearer ' + token});
         let options = new RequestOptions({ headers: headers });
-        return this.http.put(this.url + bucketId, JSON.stringify({name}), options)
+        return this.http.put(this.url + bucketId, JSON.stringify({'name': name}), options)
             .map(response => response.json())
             .catch(errors => { 
                 return Observable.throw(errors.json())
@@ -109,19 +162,6 @@ export class BucketService{
             });
     }
 
-    // get bucket lists with names containing the value of 'q'
-    searchBucket(search, limit){
-        let limits = limit || 20;
-        let token = localStorage.getItem('current_user');
-        let headers = new Headers({ 'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + token});
-        let options = new RequestOptions({ headers: headers });
-        return this.http.get(this.url +'?q=' + search + "&limit=" + limits, options)
-            .map(response => response.json())
-            .catch(errors => { 
-                return Observable.throw(errors.json())
-            });
-    }
 }
 
 @Injectable()
@@ -145,12 +185,19 @@ export class ItemService{
     }
 
     // create bucket list item
-    updateItem(bucketId:number, itemId:number, name:string){
+    updateItem(bucketId:number, itemId:number, editedField:string, editedValue: any){
         let token = localStorage.getItem('current_user');
+        let data = {}
+        if(editedField == "name"){
+            data = {'name': editedValue}
+        }else{
+            data = {'name': '', 'done': editedValue}
+        }
         let headers = new Headers({ 'Content-Type': 'application/json',
         'Authorization': 'Bearer ' + token});
         let options = new RequestOptions({ headers: headers });
-        return this.http.put(this.url + bucketId + '/items/' + itemId, JSON.stringify({"name":name}), options)
+        return this.http.put(this.url + bucketId + '/items/' + itemId,
+        JSON.stringify(data), options)
             .map(response => response.json())
             .catch(errors => { 
                 return Observable.throw(errors.json())

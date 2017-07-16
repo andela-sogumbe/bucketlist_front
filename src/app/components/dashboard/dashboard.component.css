@@ -17,11 +17,35 @@ nav a{
 }
 
 .itemdata{
+    /*display: none;*/
+}
+.card .modal h4, .card .modal input, .itemIdDisplay{
+    color: black;
+}
+#usersettingsmodal {height: 100% !important ; }
+#usersettingsmodal .row{ margin-bottom: 5px !important;}
+
+#search-submit, #update-bucket-submit{
     display: none;
 }
 
-#viewitemsmodal { width: 60% !important ; height: 65% !important ; }
-
-#search-submit{
-    display: none;
+.card{
+word-wrap: break-word;
 }
+
+.bucketsInFor{
+
+}
+
+.card-title{
+    font-size: 16px;
+    text-transform: uppercase;
+    font-weight: bold;
+}
+
+.bucketsInFor .col .card{
+    min-height: 350px;
+    min-width: 350px;
+}
+
+

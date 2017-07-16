@@ -55,9 +55,11 @@ export class LoginComponent  implements AfterViewInit, OnInit{
       else{
         localStorage.setItem('current_user', '');
         localStorage.setItem('login_status', '0');
-        this.errorMessages = JSON.stringify(this.authResponse.messages).replace(/[\]}"{[]/g, '')
+        this.errorMessages = JSON.stringify(this.authResponse.messages).replace(/[\]'_}"{[]/g, '')
         Materialize.toast(this.errorMessages, 5000);
       }
+    }, errors => {
+        Materialize.toast("Error connecting to the database", 5000);
     })
   }
 }
