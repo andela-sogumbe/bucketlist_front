@@ -97,7 +97,8 @@
                             <span>Bucket List ID: </span>
                             <span class = "bId" id = "bucketId{{key}}">{{bucketResponse.bucketlists[key].id}}</span><br />
                             <span>Created: {{bucketResponse.bucketlists[key].date_created}}</span><br />
-                            <span>Modified: {{bucketResponse.bucketlists[key].date_modified}}</span><br /><hr />
+                            <span>Modified: {{bucketResponse.bucketlists[key].date_modified}}</span><br />
+                            <span>Number Of Items: {{bucketResponse.bucketlists[key].items.length}}</span><br /><hr />
                             <p><a (click)="setId(key)" href="#newitemmodal"> >> Add item</a></p>
                             <p><a (click)="setId(key);viewItems(key)" href="javascript:void(0)"> >> View items</a></p>
                             <div id = "item{{key}}data" class="itemdata">
@@ -144,7 +145,7 @@
                             </div>
                         </div>
                         <div class="card-action">
-                            <a (click)="setId(key)" href="#updatebucketlistmodal">Update Bucket List</a>
+                            <a (click)="setId(key)" href="#updatebucketlistmodal"> >> Update Bucket List</a>
                         </div>
                     </div>
                 </div>
