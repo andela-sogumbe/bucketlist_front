@@ -64,24 +64,19 @@ export class DashboardComponent implements AfterViewInit, OnInit{
       return false;
     }else{
       this.loader = false;
-      if(this.getPaginatedBuckets(1)){
-        if(JSON.stringify(this.bucketResponse.messages).replace(/[\]}"_{[]/g, ' ').includes('Access Denied')){
-          localStorage.setItem('current_user', '');
-          localStorage.setItem('login_status', '0');
-          this.router.navigate(['/login'])
-        }
-      }else{
-        // Materialize.toast(JSON.stringify(this.bucketResponse.messages).replace(/[\]'_}"{[]/g, ' '), 5000);
-      }
+      this.getPaginatedBuckets(1);
+      this.getUserDetails();
     }
-
-    this.getUserDetails()
 
   }
 
   // get user details 
   getUserDetails(){
     this.authService.authGetUser().subscribe(response => {
+
+      if(JSON.stringify(response.messages).includes('Access Denied')){
+          this.logOutUser()
+      }
 
       if(response.messages == 'user exists'){
         this.userId = response.id;
@@ -112,6 +107,9 @@ export class DashboardComponent implements AfterViewInit, OnInit{
         this.userpassword,
         this.useroldpassword).subscribe(response => {
           Materialize.toast(JSON.stringify(response.messages).replace(/[\]}"{[]/g, ''), 5000);
+          if(JSON.stringify(response.messages).includes('Access Denied')){
+            this.logOutUser()
+          }
           return false
         }, errors => {
         Materialize.toast("Error connecting to the database", 5000);
@@ -121,6 +119,7 @@ export class DashboardComponent implements AfterViewInit, OnInit{
 
   // log out user
   logOutUser(){
+    Materialize.toast("Your token has expired. Please log in again", 5000);
     localStorage.setItem('login_status', '0');
     localStorage.setItem('current_user', '');
     this.router.navigate(['/login']);
@@ -130,6 +129,9 @@ export class DashboardComponent implements AfterViewInit, OnInit{
   newBucket(){
     this.bucketService.createBucket(this.bucket).subscribe(response => {
       this.bucketResponse = response;
+      if(JSON.stringify(this.bucketResponse.messages).includes('Access Denied')){
+          this.logOutUser()
+      }
       if(this.bucketResponse.messages == "create_success"){
         window.location.reload()
         // Materialize.toast("Bucket list successfully created", 5000);
@@ -149,6 +151,9 @@ export class DashboardComponent implements AfterViewInit, OnInit{
     }
     this.bucketService.searchBucket(this.search, this.limit).subscribe(
       response => {
+        if(JSON.stringify(response.messages).includes('Access Denied')){
+          this.logOutUser()
+        }
         if(JSON.stringify(response.messages).includes("list_success")){
           this.bucketResponse = response;
           if(this.bucketResponse.bucketlists.length > 0){
@@ -158,7 +163,7 @@ export class DashboardComponent implements AfterViewInit, OnInit{
           }
           
         }else{
-          Materialize.toast(JSON.stringify(response).replace(/[\]}"_{[]/g, ' '), 5000);
+          Materialize.toast(JSON.stringify(response.messages).replace(/[\]}"_{[]/g, ' '), 5000);
         }
     },
     errors => {
@@ -166,19 +171,21 @@ export class DashboardComponent implements AfterViewInit, OnInit{
     })
   }
 
+  // get all bucket lists
   getPaginatedBuckets(page){
     this.bucketService.getAllBuckets(page, this.limit, this.search).subscribe(response => {
       this.bucketResponse = response;
+      if(JSON.stringify(this.bucketResponse.messages).includes('Access Denied')){
+          this.logOutUser()
+      }
       if(this.bucketResponse.bucketlists){
         this.keys = Object.keys(this.bucketResponse.bucketlists)
         if(!this.bucketResponse.messages.includes("list_success")){
           Materialize.toast(this.bucketResponse.messages, 5000)
-          return false;
         }else{
           jQuery(document).ready(function(){
             Materialize.updateTextFields();
           });
-          return true;
         }
       }
     }, errors => {
@@ -194,7 +201,14 @@ export class DashboardComponent implements AfterViewInit, OnInit{
   // update bucket list name
   updateBucket(key){
     this.bucketService.updateBucket(this.bucketId, this.bucketName).subscribe(response => {
-      Materialize.toast(JSON.stringify(response.messages), 5000);
+      this.bucketResponse = response;
+      if(JSON.stringify(this.bucketResponse.messages).includes('Access Denied')){
+          this.logOutUser()
+      }
+      if(this.bucketResponse.bucketlists){
+        this.keys = Object.keys(this.bucketResponse.bucketlists)
+      }
+      window.location.reload()
     }, errors => {
         Materialize.toast("Error connecting to the database", 5000);
     });
@@ -205,6 +219,9 @@ export class DashboardComponent implements AfterViewInit, OnInit{
     this.bucketId = jQuery('#bucketId' + key).html();
     if(confirm('Are you sure you want to delete bucket list id: ' + this.bucketId)){
       this.bucketService.deleteBucket(this.bucketId).subscribe(response => {
+        if(JSON.stringify(response.messages).includes('Access Denied')){
+          this.logOutUser()
+        }
         let index = this.bucketResponse.bucketlists.indexOf(this.bucketResponse.bucketlists[key])
         this.bucketResponse.bucketlists.splice(index)
         this.keys = Object.keys(this.bucketResponse.bucketlists)
@@ -226,6 +243,9 @@ export class DashboardComponent implements AfterViewInit, OnInit{
   createItem(){
     this.itemService.createItem(this.bucketId, this.itemName).subscribe(response => {
       this.bucketResponse = response;
+      if(JSON.stringify(this.bucketResponse.messages).includes('Access Denied')){
+          this.logOutUser()
+      }
       if(this.bucketResponse.messages == "create_item_success"){
         window.location.reload()
       }else{
@@ -265,6 +285,9 @@ export class DashboardComponent implements AfterViewInit, OnInit{
     if(event.which == 13 || event.type == "click") {
       if(this.bucketResponse.bucketlists[key].items.length > 0){
         this.itemService.updateItem(this.bucketId, iId, editedField, editedValue).subscribe(response => {
+          if(JSON.stringify(response.messages).includes('Access Denied')){
+            this.logOutUser()
+          }
           Materialize.toast(JSON.stringify(response.messages).replace(/[\]'_}"{[]/g, ' '), 5000);
         }, errors => {
         Materialize.toast("Error connecting to the database", 5000);
@@ -277,6 +300,9 @@ export class DashboardComponent implements AfterViewInit, OnInit{
   deleteItems(key, iId){
     if(confirm("Are you sure you want to delete item id: " + iId)){
       this.itemService.deleteItem(this.bucketId, iId).subscribe(response => {
+        if(JSON.stringify(response.messages).includes('Access Denied')){
+          this.logOutUser()
+        }
         let index = this.bucketResponse.bucketlists[key].items.indexOf(this.bucketResponse.bucketlists[key].items[iId])
         this.bucketResponse.bucketlists[key].items.splice(index)
         if(JSON.stringify(response.messages).replace(/[\]}"{[]/g, '').includes('delete_item_success'))
