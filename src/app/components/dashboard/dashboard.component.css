@@ -48,4 +48,10 @@ word-wrap: break-word;
     min-width: 340px;
 }
 
+.btn-floating{
+    position: absolute;
+    margin-left: 295px;
+    margin-top: -47px;
+}
+
 
