@@ -119,7 +119,7 @@ export class DashboardComponent implements AfterViewInit, OnInit{
 
   // log out user
   logOutUser(){
-    Materialize.toast("Your token has expired. Please log in again", 5000);
+    //Materialize.toast("Your token has expired. Please log in again", 5000);
     localStorage.setItem('login_status', '0');
     localStorage.setItem('current_user', '');
     this.router.navigate(['/login']);

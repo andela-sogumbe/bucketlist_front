@@ -98,7 +98,7 @@
                             <span>Created: {{bucketResponse.bucketlists[key].date_created}}</span><br />
                             <span>Modified: {{bucketResponse.bucketlists[key].date_modified}}</span><br /><hr />
                             <p><a (click)="setId(key)" href="#newitemmodal"> >> Add item</a></p>
-                            <p><a (click)="setId(key);viewItems(key)" routerLink="/dashboard"> >> View items</a></p>
+                            <p><a (click)="setId(key);viewItems(key)" href="javascript:void(0)"> >> View items</a></p>
                             <div id = "item{{key}}data" class="itemdata">
 
                             <!-- View Items Modal -->
