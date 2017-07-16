@@ -8,7 +8,7 @@ import 'rxjs/add/observable/throw';
 @Injectable()
 export class AuthService{
 
-    url = 'http://localhost:5000/api/v1/auth/'
+    url = 'https://flaskbucketlistapi.herokuapp.com/api/v1/auth/'
 
     constructor(private http: Http){}
 
@@ -86,7 +86,7 @@ export class AuthService{
 @Injectable()
 export class BucketService{
 
-    url = 'http://localhost:5000/api/v1/bucketlists/'
+    url = 'https://flaskbucketlistapi.herokuapp.com/api/v1/bucketlists/'
 
     constructor(private http: Http){}
 
@@ -167,7 +167,7 @@ export class BucketService{
 @Injectable()
 export class ItemService{
 
-    url = 'http://localhost:5000/api/v1/bucketlists/'
+    url = 'https://flaskbucketlistapi.herokuapp.com/api/v1/bucketlists/'
 
     constructor(private http: Http){}
 
