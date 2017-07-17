@@ -12,6 +12,19 @@ export class AuthService{
 
     constructor(private http: Http){}
 
+    //validate recaptcha
+    authValidateRecaptcha(secret: string, recaptchaToken: string){
+        let token = localStorage.getItem('current_user');
+        let headers = new Headers({ 'Content-Type': 'application/json' });
+        let options = new RequestOptions({ headers: headers });
+        return this.http.post(this.url + 'verifyrecaptcha/',
+        JSON.stringify({'secret':secret, 'response': recaptchaToken}), options)
+            .map(response => response.json())
+            .catch(errors => {
+                return Observable.throw(errors.json())
+        });
+    }
+
     // check if a user is logged in
     authEditUser(id:number, name:string, email:string, password:string, oldpassword:string){
         let token = localStorage.getItem('current_user');

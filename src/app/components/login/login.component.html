@@ -8,7 +8,7 @@
 </nav>
 <div class="container">
     <div class="row bucketBox">
-        <form (ngSubmit)="loginUser()" #loginForm="ngForm" class="col s12">
+        <form (ngSubmit)="loginUser()"  #loginForm="ngForm" class="col s12">
             <div class="row">
                 <div class="form-group input-field col s7 offset-s3">
                 <input id="email" type="text" autocomplete="off" required [(ngModel)]="email" name="email" class="form-control validate">
@@ -19,6 +19,11 @@
                 <div class="form-group input-field col s7 offset-s3">
                 <input id="password" type="password" autocomplete="off" required [(ngModel)]="password" name="password" class="form-control validate">
                 <label for="password">Password</label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group input-field col s7 offset-s3">
+                    <div id="recaptcha_display"></div>
                 </div>
             </div>
             <div class="row">

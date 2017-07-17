@@ -31,3 +31,7 @@ nav a{
 body{
     background-color: #009688 !important;
 }
+
+.g-recaptcha{
+    width: 400px !important;
+}
