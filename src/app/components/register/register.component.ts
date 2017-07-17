@@ -22,6 +22,7 @@ export class RegisterComponent implements AfterViewInit, OnInit{
   errorMessages: string;
   recaptchaSuccess = false;
   secretKey = '6LeZUykUAAAAABcKtRMyM5jOZ_6FIVsHWrIKx-EF';
+  myCaptcha:number;
 
   constructor(private router: Router, private authService: AuthService){
 
@@ -44,25 +45,28 @@ export class RegisterComponent implements AfterViewInit, OnInit{
     if(login_status == "1"){
       this.router.navigate(['/dashboard']);
     }
-    
-    jQuery(document).ready(function(){
-      grecaptcha.render('recaptcha_display', {
-        'sitekey' : '6LeZUykUAAAAAFYI2wcLXbsKvtC7gj-PEEVbv8y3',
-      });
-    });
-
+    this.prepCaptcha()
   }
 
+  prepCaptcha() {
+        jQuery(document).ready(function(){
+          localStorage.setItem('recaptchaWidgetId', grecaptcha.render('recaptcha_display', {
+            'sitekey' : '6LeZUykUAAAAAFYI2wcLXbsKvtC7gj-PEEVbv8y3',
+          }))
+        })  
+  }
+
+  // register a user
   registerUser() {
 
     if(this.recaptchaSuccess == false){
 
-      if(!grecaptcha.getResponse()){
+      if(grecaptcha.getResponse(localStorage.getItem('recaptchaWidgetId')) == null){
         Materialize.toast('Please prove that you are human by clicking on the recaptcha check box', 5000);
         return false
       }
 
-      let recaptchaToken = grecaptcha.getResponse();
+      let recaptchaToken = grecaptcha.getResponse(localStorage.getItem('recaptchaWidgetId'));
       if(recaptchaToken.length < 1){
         Materialize.toast('Please prove that you are human by clicking on the recaptcha check box', 5000);
         return false;

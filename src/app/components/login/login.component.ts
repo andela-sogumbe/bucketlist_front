@@ -38,13 +38,7 @@ export class LoginComponent  implements AfterViewInit, OnInit{
     if(login_status == "1"){
       this.router.navigate(['/dashboard']);
     }
-
-    jQuery(document).ready(function(){
-      grecaptcha.render('recaptcha_display', {
-        'sitekey' : '6LeZUykUAAAAAFYI2wcLXbsKvtC7gj-PEEVbv8y3',
-      });
-    });
-    
+    this.prepCaptcha()
   }
 
   redirectPage(){
@@ -53,16 +47,24 @@ export class LoginComponent  implements AfterViewInit, OnInit{
     return false;
   }
 
+  prepCaptcha() {
+        jQuery(document).ready(function(){
+          localStorage.setItem('recaptchaWidgetId', grecaptcha.render('recaptcha_display', {
+            'sitekey' : '6LeZUykUAAAAAFYI2wcLXbsKvtC7gj-PEEVbv8y3',
+          }))
+        })  
+  }
+
   loginUser() {
 
     if(this.recaptchaSuccess == false){
 
-      if(!grecaptcha.getResponse()){
+      if(grecaptcha.getResponse(localStorage.getItem('recaptchaWidgetId')) == null){
         Materialize.toast('Please prove that you are human by clicking on the recaptcha check box', 5000);
         return false
       }
 
-      let recaptchaToken = grecaptcha.getResponse();
+      let recaptchaToken = grecaptcha.getResponse(localStorage.getItem('recaptchaWidgetId'));
       if(recaptchaToken.length < 1){
         Materialize.toast('Please prove that you are human by clicking on the recaptcha check box', 5000);
         return false;
