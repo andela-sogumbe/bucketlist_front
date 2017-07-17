@@ -74,24 +74,7 @@ export class RegisterComponent implements AfterViewInit, OnInit{
       this.authService.authValidateRecaptcha(this.secretKey, recaptchaToken).subscribe(recaptchaResponse => {
         if(recaptchaResponse.success){
           this.recaptchaSuccess = true;
-
-          this.authService.authRegister(this.name, this.email, this.password).subscribe(response => {
-          this.authResponse = response;
-          if(this.authResponse.user_token != ''){
-              localStorage.setItem('current_user', this.authResponse.user_token);
-              localStorage.setItem('login_status', '1');
-              this.router.navigate(['/dashboard']);
-          }
-          else{
-            localStorage.setItem('current_user', '');
-            localStorage.setItem('login_status', '0');
-            this.errorMessages = JSON.stringify(this.authResponse.messages).replace(/[\]'_}"{[]/g, '')
-            Materialize.toast(this.errorMessages, 5000);
-          }
-        }, errors => {
-            Materialize.toast("Error connecting to the database", 5000);
-        })
-
+          this.doRegistration()
         }else{
           Materialize.toast("Incorrect Recaptcha", 5000);
         }
@@ -99,26 +82,31 @@ export class RegisterComponent implements AfterViewInit, OnInit{
           Materialize.toast("Error connecting to the database", 5000);
       });
 
+    }else{
+      this.doRegistration()
     }
+  }
 
-    if(this.recaptchaSuccess){
-      this.authService.authRegister(this.name, this.email, this.password).subscribe(response => {
-        this.authResponse = response;
-        if(this.authResponse.user_token != ''){
-            localStorage.setItem('current_user', this.authResponse.user_token);
-            localStorage.setItem('login_status', '1');
-            this.router.navigate(['/dashboard']);
-        }
-        else{
-          localStorage.setItem('current_user', '');
-          localStorage.setItem('login_status', '0');
-          this.errorMessages = JSON.stringify(this.authResponse.messages).replace(/[\]'_}"{[]/g, '')
-          Materialize.toast(this.errorMessages, 5000);
-        }
-      }, errors => {
-          Materialize.toast("Error connecting to the database", 5000);
-      })
-    }
+  // send registration credentials to register service
+  doRegistration(){
+
+    this.authService.authRegister(this.name, this.email, this.password).subscribe(response => {
+      this.authResponse = response;
+      if(this.authResponse.user_token != ''){
+          localStorage.setItem('current_user', this.authResponse.user_token);
+          localStorage.setItem('login_status', '1');
+          this.router.navigate(['/dashboard']);
+      }
+      else{
+        localStorage.setItem('current_user', '');
+        localStorage.setItem('login_status', '0');
+        this.errorMessages = JSON.stringify(this.authResponse.messages).replace(/[\]'_}"{[]/g, '')
+        Materialize.toast(this.errorMessages, 5000);
+      }
+    }, errors => {
+        Materialize.toast("Error connecting to the database", 5000);
+    })
+
   }
 }
 
