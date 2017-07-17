@@ -46,7 +46,7 @@ export class RegisterComponent implements AfterViewInit, OnInit{
     }
     
     jQuery(document).ready(function(){
-      this.grecaptcha.render('recaptcha_display', {
+      grecaptcha.render('recaptcha_display', {
         'sitekey' : '6LeZUykUAAAAAFYI2wcLXbsKvtC7gj-PEEVbv8y3',
       });
     });
