@@ -33,10 +33,6 @@ nav a{
 word-wrap: break-word;
 }
 
-.bucketsInFor{
-
-}
-
 .card-title{
     font-size: 16px;
     text-transform: uppercase;
@@ -46,12 +42,18 @@ word-wrap: break-word;
 .bucketsInFor .col .card{
     min-height: 350px;
     min-width: 340px;
+    margin-top: 20px;
 }
 
-.btn-floating{
+#deleteBucketLink{
     position: absolute;
     margin-left: 295px;
     margin-top: -47px;
 }
 
+#updateBucketLink{
+    position: absolute;
+    margin-left: 245px;
+    margin-top: -47px;
+}
 
