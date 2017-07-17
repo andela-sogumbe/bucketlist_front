@@ -202,23 +202,4 @@
         </div>
     </div>
 
-    <!-- Update Bucket list Modal -->
-    <div id="updatebucketlistmodal" class="modal">
-        <div class="modal-content">
-            <h4>Update Bucket List</h4>
-            <div id="updatebucketlistcontent">
-                <form (ngSubmit)="updateBucket()" #UpdateBucketListForm="ngForm">
-                    <div class="form-group input-field col s5">
-                        <input id="bucketName" type="text" autocomplete="off" required [(ngModel)]="bucketName" name="bucketName" class="form-control validate">
-                        <label for="bucketName">New Bucket List Name</label>
-                    </div>
-                    <input type="submit" id="update-bucket-submit" name="update-bucket-submit">
-                </form>
-            </div>
-        </div>
-        <div class="modal-footer">
-            <a routerLink="/dashboard" class="modal-action modal-close waves-effect waves-green btn-flat">Close</a>
-        </div>
-    </div>
-
 </div>
