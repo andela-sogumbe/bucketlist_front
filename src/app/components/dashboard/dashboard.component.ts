@@ -128,15 +128,14 @@ export class DashboardComponent implements AfterViewInit, OnInit{
   // create new bucket
   newBucket(){
     this.bucketService.createBucket(this.bucket).subscribe(response => {
-      this.bucketResponse = response;
-      if(JSON.stringify(this.bucketResponse.messages).includes('Access Denied')){
+      
+      if(JSON.stringify(response.messages).includes('Access Denied')){
           this.logOutUser()
       }
-      if(this.bucketResponse.messages == "create_success"){
+      if(response.messages == "create_success"){
         window.location.reload()
-        // Materialize.toast("Bucket list successfully created", 5000);
       }else{
-        this.errorMessages = JSON.stringify(this.bucketResponse.messages).replace(/[\]}"{[]/g, '')
+        this.errorMessages = JSON.stringify(response.messages).replace(/[\]}"{[]/g, '')
         Materialize.toast(this.errorMessages, 5000);
       }
     }, errors => {
@@ -212,14 +211,11 @@ export class DashboardComponent implements AfterViewInit, OnInit{
 
     if(event.which == 13) {
       this.bucketService.updateBucket(this.bucketId, bucketName).subscribe(response => {
-        if(JSON.stringify(this.bucketResponse.messages).includes('Access Denied')){
+        if(JSON.stringify(response.messages).includes('Access Denied')){
             this.logOutUser()
         }
-        if(this.bucketResponse.bucketlists){
-          this.keys = Object.keys(this.bucketResponse.bucketlists)
-        }
         Materialize.toast(
-          JSON.stringify(this.bucketResponse.messages).replace(/[\]'_}"{[]/g, ' '), 5000);
+          JSON.stringify(response.messages).replace(/[\]'_}"{[]/g, ' '), 5000);
       }, errors => {
           Materialize.toast("Error connecting to the database", 5000);
       });
