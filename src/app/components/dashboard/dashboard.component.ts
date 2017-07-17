@@ -198,20 +198,32 @@ export class DashboardComponent implements AfterViewInit, OnInit{
     this.bucketId = jQuery('#bucketId' + key).html()
   }
 
-  // update bucket list name
-  updateBucket(){
-    this.bucketService.updateBucket(this.bucketId, this.bucketName).subscribe(response => {
-      this.bucketResponse = response;
-      if(JSON.stringify(this.bucketResponse.messages).includes('Access Denied')){
-          this.logOutUser()
-      }
-      if(this.bucketResponse.bucketlists){
-        this.keys = Object.keys(this.bucketResponse.bucketlists)
-      }
-      window.location.reload()
-    }, errors => {
-        Materialize.toast("Error connecting to the database", 5000);
+  // view bucket list name
+  viewBucket(key){
+
+    jQuery(document).ready(function(){
+      Materialize.updateTextFields();
+      jQuery('#updatebucketlistmodal-' + key).modal('open');
     });
+  }
+
+  // update bucket list name
+  updateBucket(event, key, bucketName){
+
+    if(event.which == 13) {
+      this.bucketService.updateBucket(this.bucketId, bucketName).subscribe(response => {
+        if(JSON.stringify(this.bucketResponse.messages).includes('Access Denied')){
+            this.logOutUser()
+        }
+        if(this.bucketResponse.bucketlists){
+          this.keys = Object.keys(this.bucketResponse.bucketlists)
+        }
+        Materialize.toast(
+          JSON.stringify(this.bucketResponse.messages).replace(/[\]'_}"{[]/g, ' '), 5000);
+      }, errors => {
+          Materialize.toast("Error connecting to the database", 5000);
+      });
+    }
   }
 
   // delete bucket

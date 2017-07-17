@@ -92,7 +92,7 @@
                 <div class="col s4">
                     <div class="card blue-grey darken-1">
                         <div class="card-content white-text">
-                            <a id="updateBucketLink" (click)="setId(key)" href="#updatebucketlistmodal" class="btn btn-floating blue-grey darken-1">
+                            <a id="updateBucketLink" (click)="setId(key);viewBucket(key)" href="javascript:void(0)" class="btn btn-floating blue-grey darken-1">
                                 <i class="material-icons">edit</i>
                             </a>
                             <a id="deleteBucketLink" (click)="deleteBucket(key)" href="javascript:void(0)" class="btn btn-floating blue-grey darken-1">
@@ -107,6 +107,25 @@
                             <p><a (click)="setId(key)" href="#newitemmodal"> >> Add item</a></p>
                             <p><a (click)="setId(key);viewItems(key)" href="javascript:void(0)"> >> View items</a></p>
                             <div id = "item{{key}}data" class="itemdata">
+
+                            <!-- Update Bucket list Modal -->
+                            <div id="updatebucketlistmodal-{{key}}" class="modal">
+                                <div class="modal-content">
+                                    <h4>Update Bucket List</h4>
+                                    <div class="updatebucketlistcontent">
+                                        <form (ngSubmit)="updateBucket()" #UpdateBucketListForm="ngForm">
+                                            <div class="form-group input-field col s5">
+                                                <input (keyup)="updateBucket($event, key, bucketResponse.bucketlists[key].name)" id="bucketName-{{bucketResponse.bucketlists[key].id}}" type="text" autocomplete="off" required [(ngModel)]="bucketResponse.bucketlists[key].name" name="bucketName-{{bucketResponse.bucketlists[key].id}}" class="form-control validate">
+                                                <label for="bucketName-{{bucketResponse.bucketlists[key].id}}">New Bucket List Name</label>
+                                            </div>
+                                            <input type="submit" id="update-bucket-submit" name="update-bucket-submit">
+                                        </form>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <a routerLink="/dashboard" class="modal-action modal-close waves-effect waves-green btn-flat">Close</a>
+                                </div>
+                            </div>
 
                             <!-- View Items Modal -->
                             <div id="viewitemsmodal{{key}}" class="modal">

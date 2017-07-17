@@ -35,11 +35,7 @@ export class RegisterComponent implements AfterViewInit, OnInit{
 
   // after all components have been loaded execute jquery
   ngAfterViewInit(){
-    jQuery(document).ready(function(){
-      grecaptcha.render('recaptcha_display', {
-        'sitekey' : '6LeZUykUAAAAAFYI2wcLXbsKvtC7gj-PEEVbv8y3',
-      });
-    });
+    
   }
 
   // on page load authenticate user
@@ -48,15 +44,27 @@ export class RegisterComponent implements AfterViewInit, OnInit{
     if(login_status == "1"){
       this.router.navigate(['/dashboard']);
     }
+    
+    jQuery(document).ready(function(){
+      this.grecaptcha.render('recaptcha_display', {
+        'sitekey' : '6LeZUykUAAAAAFYI2wcLXbsKvtC7gj-PEEVbv8y3',
+      });
+    });
+
   }
 
   registerUser() {
 
     if(this.recaptchaSuccess == false){
 
-      let recaptchaToken = grecaptcha.getResponse()
+      if(!grecaptcha.getResponse()){
+        Materialize.toast('Please prove that you are human by clicking on the recaptcha check box', 5000);
+        return false
+      }
+
+      let recaptchaToken = grecaptcha.getResponse();
       if(recaptchaToken.length < 1){
-        Materialize.toast('Please prove that you are human by clickng on the recaptcha check box', 5000);
+        Materialize.toast('Please prove that you are human by clicking on the recaptcha check box', 5000);
         return false;
       }
       this.authService.authValidateRecaptcha(this.secretKey, recaptchaToken).subscribe(recaptchaResponse => {
