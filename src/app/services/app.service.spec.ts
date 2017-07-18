@@ -27,11 +27,36 @@ describe('AuthService', ()=>{
         TestBed.compileComponents();
     }));
 
-    // it should be created
+    // test AuthService is successfully created
     it('should construct', async(inject(
     [AuthService, MockBackend], (authService, mockBackend) => {
         expect(authService).toBeDefined();
     })));
+
+    // test user can login using saved email and password
+    describe('authLogin', () => {
+        const mockResponse = {
+                'messages': "login_success",
+                'user_token': "w3ed3rd3r.ee3www3ee.323der4gty5"
+            };
+
+        it('should login user', async(inject(
+        [AuthService, MockBackend], (authService, mockBackend) => {
+
+            mockBackend.connections.subscribe(conn => {
+                conn.mockRespond(new Response(new ResponseOptions({ body: JSON.stringify(mockResponse) })));
+            });
+
+            const result = authService.authLogin("testuser1@testusers.com", "testuser1");
+
+            result.subscribe(res => {
+                expect(res).toEqual({
+                        'messages': "login_success",
+                        'user_token': "w3ed3rd3r.ee3www3ee.323der4gty5"
+                });
+            });
+        })));
+    });
 
 });
 
@@ -58,7 +83,7 @@ describe('BucketService', ()=>{
         TestBed.compileComponents();
     }));
 
-    // it should be created
+    // test BucketService is successfully created
     it('should construct', async(inject(
     [BucketService, MockBackend], (bucketService, mockBackend) => {
         expect(bucketService).toBeDefined();
@@ -120,10 +145,49 @@ describe('ItemService', ()=>{
         TestBed.compileComponents();
     }));
 
-    // it should be created
+    // test ItemService is successfully created
     it('should construct', async(inject(
     [ItemService, MockBackend], (itemService, mockBackend) => {
         expect(itemService).toBeDefined();
     })));
+
+    // test user can create bucket list item
+    describe('createItem', () => {
+        const mockResponse = {
+                    'messages': 'create_item_success',
+                    'item': {
+                        'id': "1",
+                        'name': "item 1",
+                        'date_created': "18/07/2017 17:36:27 GMT",
+                        'date_modified': "18/07/2017 17:36:27 GMT",
+                        'done': "false",
+                        'bucket_id': "1"
+                    }
+                };
+
+        it('should create bucket list item', async(inject(
+        [ItemService, MockBackend], (itemService, mockBackend) => {
+
+            mockBackend.connections.subscribe(conn => {
+                conn.mockRespond(new Response(new ResponseOptions({ body: JSON.stringify(mockResponse) })));
+            });
+
+            const result = itemService.createItem("1", "item 1");
+
+            result.subscribe(res => {
+                expect(res).toEqual({
+                    'messages': 'create_item_success',
+                    'item': {
+                        'id': "1",
+                        'name': "item 1",
+                        'date_created': "18/07/2017 17:36:27 GMT",
+                        'date_modified': "18/07/2017 17:36:27 GMT",
+                        'done': "false",
+                        'bucket_id': "1"
+                    }
+                });
+            });
+        })));
+    });
 
 });
