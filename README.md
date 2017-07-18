@@ -1,6 +1,6 @@
-# Bucketlists
+## Bucket list Front End: [Login](https://angularbucketlist.herokuapp.com/login), [Register](https://angularbucketlist.herokuapp.com/login)
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 1.2.0.
+This angular app allows a user to create a bucket list and add items to it.
 
 ## Development server
 

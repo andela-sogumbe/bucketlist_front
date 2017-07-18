@@ -8,6 +8,7 @@ import { AppComponent } from './app.component';
 import { RegisterComponent } from './components/register/register.component';
 import { LoginComponent } from './components/login/login.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
+import { HomeComponent } from './components/home/home.component';
 import { routing } from './app.routing';
 
 @NgModule({
@@ -15,7 +16,8 @@ import { routing } from './app.routing';
     AppComponent,
     RegisterComponent,
     LoginComponent,
-    DashboardComponent
+    DashboardComponent,
+    HomeComponent
 
   ],
   imports: [
