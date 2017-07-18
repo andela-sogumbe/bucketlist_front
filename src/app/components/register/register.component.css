@@ -1,6 +1,7 @@
 nav {
     height: 50px;
     line-height: 50px;
+    background-color: #158F61;
 }
 
 nav a{
@@ -16,6 +17,10 @@ nav a{
 
 .row{
     margin-top: 20px;
+}
+
+button{
+    background-color: #158F61;
 }
 
 .bucketBox{

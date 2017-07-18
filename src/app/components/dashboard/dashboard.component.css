@@ -2,6 +2,7 @@ nav {
     height: 50px;
     line-height: 50px;
     margin-bottom: 20px;
+    background-color: #158F61;
 }
 .container{
     width: 1028px;
@@ -16,9 +17,6 @@ nav a{
     color: #ffab40;
 }
 
-.itemdata{
-    /*display: none;*/
-}
 .card .modal h4, .card .modal input, .itemIdDisplay{
     color: black;
 }
@@ -31,6 +29,7 @@ nav a{
 
 .card{
 word-wrap: break-word;
+background-color: #158F61;
 }
 
 .card-title{
