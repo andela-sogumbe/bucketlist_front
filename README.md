@@ -1,4 +1,4 @@
-## Bucket list Front End: [Login](https://angularbucketlist.herokuapp.com/login), [Register](https://angularbucketlist.herokuapp.com/login)
+## Bucket list Front End: <a href = "https://angularbucketlist.herokuapp.com/login" target="_blank">Login</a>, <a href = "https://angularbucketlist.herokuapp.com/register" target="_blank">Register</a>
 
 This angular app allows a user to create a bucket list and add items to it.
 
