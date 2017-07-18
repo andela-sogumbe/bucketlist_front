@@ -197,7 +197,8 @@ export class DashboardComponent implements AfterViewInit, OnInit{
 
   // set the bucket list id of the item to be created
   setId(key){
-    this.bucketId = jQuery('#bucketId' + key).html()
+    this.bucketId = jQuery('#bucketId' + key).html();
+    this.bucketName = this.bucketResponse.bucketlists[key].name;
   }
 
   // view bucket list name
@@ -217,6 +218,9 @@ export class DashboardComponent implements AfterViewInit, OnInit{
         if(JSON.stringify(response.messages).includes('Access Denied')){
             this.logOutUser()
         }
+        if(JSON.stringify(response.messages).includes('already exists')){
+            this.bucketResponse.bucketlists[key].name = this.bucketName;
+        }
         Materialize.toast(
           JSON.stringify(response.messages).replace(/[\]'_}"{[]/g, ' '), 5000);
         jQuery('.modal').modal('close');
@@ -229,19 +233,19 @@ export class DashboardComponent implements AfterViewInit, OnInit{
   // delete bucket
   deleteBucket(key){
     this.bucketId = jQuery('#bucketId' + key).html();
-    if(confirm('Are you sure you want to delete bucket list id: ' + this.bucketId)){
+    if(confirm('Are you sure you want to delete this bucket list? This action is irreversible.')){
       this.bucketService.deleteBucket(this.bucketId).subscribe(response => {
         if(JSON.stringify(response.messages).includes('Access Denied')){
           this.logOutUser()
         }
+      if(response.messages == "delete_single_success"){
         let index = this.bucketResponse.bucketlists.indexOf(this.bucketResponse.bucketlists[key])
-        this.bucketResponse.bucketlists.splice(index)
+        this.bucketResponse.bucketlists.splice(index, 1);
         this.keys = Object.keys(this.bucketResponse.bucketlists)
-      if(this.bucketResponse.messages == "delete_single_success"){
-        //window.location.reload()
+        Materialize.toast("Bucket list deleted successfully", 5000);
       }
       else{
-        this.errorMessages = JSON.stringify(this.bucketResponse.messages).replace(/[\]}"{[]/g, '')
+        this.errorMessages = JSON.stringify(response.messages).replace(/[\]'_}"{[]/g, '')
         Materialize.toast(this.errorMessages, 5000);
         }
       }, errors => {
@@ -309,16 +313,16 @@ export class DashboardComponent implements AfterViewInit, OnInit{
   }
 
   // delete items
-  deleteItems(key, iId){
-    if(confirm("Are you sure you want to delete item id: " + iId)){
+  deleteItems(key, itemIndex, iId){
+    if(confirm("Are you sure you want to delete this item? This action is irreversible.")){
       this.itemService.deleteItem(this.bucketId, iId).subscribe(response => {
         if(JSON.stringify(response.messages).includes('Access Denied')){
           this.logOutUser()
         }
-        let index = this.bucketResponse.bucketlists[key].items.indexOf(this.bucketResponse.bucketlists[key].items[iId])
-        this.bucketResponse.bucketlists[key].items.splice(index)
-        if(JSON.stringify(response.messages).replace(/[\]}"{[]/g, '').includes('delete_item_success'))
-        Materialize.toast("Item id: "+iId+" successfully deleted", 5000);
+        let index = this.bucketResponse.bucketlists[key].items.indexOf(this.bucketResponse.bucketlists[key].items[itemIndex])
+        this.bucketResponse.bucketlists[key].items.splice(index, 1)
+        if(JSON.stringify(response.messages).replace(/[\]_'}"{[]/g, '').includes('delete_item_success'))
+        Materialize.toast("Item successfully deleted", 5000);
       }, errors => {
         Materialize.toast("Error connecting to the database", 5000);
     });

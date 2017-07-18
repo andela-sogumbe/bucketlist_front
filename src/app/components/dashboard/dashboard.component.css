@@ -4,13 +4,18 @@ nav {
     margin-bottom: 20px;
     background-color: #158F61;
 }
+
 .container{
-    width: 1028px;
+    width: 80%;
 }
 
 nav a{
     font-size: 16px;
     padding-left: 5px;
+}
+
+.bId{
+    display: none;
 }
 
 .row label, .row a{
@@ -32,6 +37,13 @@ word-wrap: break-word;
 background-color: #158F61;
 }
 
+hr{
+border: 0;
+height: 0;
+border-top: 1px solid rgba(0, 0, 0, 0.1);
+border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+}
+
 .card-title{
     font-size: 16px;
     text-transform: uppercase;
@@ -39,20 +51,28 @@ background-color: #158F61;
 }
 
 .bucketsInFor .col .card{
-    min-height: 350px;
-    min-width: 340px;
+    min-height: 300px;
+    min-width: 30%;
     margin-top: 20px;
+}
+
+.noItemsBox{
+    color: black;
 }
 
 #deleteBucketLink{
     position: absolute;
-    margin-left: 295px;
+    margin-left: 85%;
     margin-top: -47px;
 }
 
 #updateBucketLink{
     position: absolute;
-    margin-left: 245px;
+    margin-left: 70%;
     margin-top: -47px;
+}
+
+.pagination li{
+    
 }
 
