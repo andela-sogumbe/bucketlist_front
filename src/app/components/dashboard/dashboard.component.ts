@@ -2,6 +2,7 @@ import { Component, AfterViewInit, OnInit } from '@angular/core';
 import { BucketService, AuthService, ItemService } from '../../services/app.service'
 import {Router} from '@angular/router';
 
+declare var require: any;
 declare var jQuery: any;
 declare var Materialize: any;
 
@@ -63,7 +64,6 @@ export class DashboardComponent implements AfterViewInit, OnInit{
       this.router.navigate(['/login']);
       return false;
     }else{
-      this.loader = false;
       this.getPaginatedBuckets(1);
       this.getUserDetails();
     }
@@ -122,7 +122,7 @@ export class DashboardComponent implements AfterViewInit, OnInit{
     //Materialize.toast("Your token has expired. Please log in again", 5000);
     localStorage.setItem('login_status', '0');
     localStorage.setItem('current_user', '');
-    this.router.navigate(['/login']);
+    this.router.navigate(['/']);
   }
 
   // create new bucket
@@ -148,8 +148,10 @@ export class DashboardComponent implements AfterViewInit, OnInit{
     if(typeof this.search === "undefined"){
       this.search = ""
     }
+    this.loader = true;
     this.bucketService.searchBucket(this.search, this.limit).subscribe(
       response => {
+        this.loader = false;
         if(JSON.stringify(response.messages).includes('Access Denied')){
           this.logOutUser()
         }
@@ -173,10 +175,11 @@ export class DashboardComponent implements AfterViewInit, OnInit{
   // get all bucket lists
   getPaginatedBuckets(page){
     this.bucketService.getAllBuckets(page, this.limit, this.search).subscribe(response => {
-      this.bucketResponse = response;
-      if(JSON.stringify(this.bucketResponse.messages).includes('Access Denied')){
+      this.loader = false;
+      if(JSON.stringify(response.messages).includes('Access Denied')){
           this.logOutUser()
       }
+      this.bucketResponse = response;
       if(this.bucketResponse.bucketlists){
         this.keys = Object.keys(this.bucketResponse.bucketlists)
         if(!this.bucketResponse.messages.includes("list_success")){
@@ -216,6 +219,7 @@ export class DashboardComponent implements AfterViewInit, OnInit{
         }
         Materialize.toast(
           JSON.stringify(response.messages).replace(/[\]'_}"{[]/g, ' '), 5000);
+        jQuery('.modal').modal('close');
       }, errors => {
           Materialize.toast("Error connecting to the database", 5000);
       });
