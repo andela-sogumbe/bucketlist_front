@@ -2,9 +2,13 @@
 
 This angular app allows a user to create a bucket list and add items to it.
 
-## Development server
+## Running the app locally
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+- Clone or download the repo.
+
+- Edit app.service.ts with the relevant info.
+
+- Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
 
 ## Code scaffolding
 
