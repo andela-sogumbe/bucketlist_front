@@ -65,7 +65,7 @@
                 <label for="bucket">New Bucket List (Press Enter to create)</label>
             </div>
             <div class="form-group input-field col s2">
-                <input type="submit" id="bucket-submit" value="Create Bucket List" class="btn waves-effect" name="bucket-submit">
+                <input type="submit" id="bucket-submit" value="Save" class="btn waves-effect" name="bucket-submit">
             </div>
         </form>
         <form (ngSubmit)="searchBuckets()" #searchForm="ngForm">
@@ -115,14 +115,14 @@
                                 <div class="modal-content">
                                     <h4>Update Bucket List</h4>
                                     <div class="updatebucketlistcontent">
-                                        <form (ngSubmit)="updateBucket()" #UpdateBucketListForm="ngForm">
+                                        <form (ngSubmit)="updateBucket($event, key, bucketResponse.bucketlists[key].name)" #UpdateBucketListForm="ngForm">
                                             <div class="row">
                                                 <div class="form-group input-field col s7">
-                                                    <input (keyup)="updateBucket($event, key, bucketResponse.bucketlists[key].name)" id="bucketName-{{bucketResponse.bucketlists[key].id}}" type="text" autocomplete="off" required [(ngModel)]="bucketResponse.bucketlists[key].name" name="bucketName-{{bucketResponse.bucketlists[key].id}}" class="form-control validate">
+                                                    <input id="bucketName-{{bucketResponse.bucketlists[key].id}}" type="text" autocomplete="off" required [(ngModel)]="bucketResponse.bucketlists[key].name" name="bucketName-{{bucketResponse.bucketlists[key].id}}" class="form-control validate">
                                                     <label for="bucketName-{{bucketResponse.bucketlists[key].id}}">New Bucket List Name</label>
                                                 </div>
                                                 <div class="form-group input-field col s2">
-                                                    <input type="submit" id="update-bucket-submit" value="Update Bucket List" class="btn waves-effect" name="update-bucket-submit">
+                                                    <input type="submit" id="update-bucket-submit" value="Save" class="btn waves-effect" name="update-bucket-submit">
                                                 </div>
                                             </div>
                                         </form>
@@ -198,7 +198,7 @@
                             <label for="newItem">New Item Name (Press Enter to create)</label>
                         </div>
                         <div class="form-group input-field col s1">
-                            <input type="submit" id="item-submit" value="Add Item" class="btn waves-effect" name="item-submit">
+                            <input type="submit" id="item-submit" value="Save" class="btn waves-effect" name="item-submit">
                         </div>
                     </div>
                 </form>

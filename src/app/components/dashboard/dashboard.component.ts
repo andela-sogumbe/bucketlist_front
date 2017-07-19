@@ -135,7 +135,7 @@ export class DashboardComponent implements AfterViewInit, OnInit{
       if(response.messages == "create_success"){
         window.location.reload()
       }else{
-        this.errorMessages = JSON.stringify(response.messages).replace(/[\]}"{[]/g, '')
+        this.errorMessages = JSON.stringify(response.messages).replace(/['\]}"{[]/g, '')
         Materialize.toast(this.errorMessages, 5000);
       }
     }, errors => {
@@ -213,21 +213,19 @@ export class DashboardComponent implements AfterViewInit, OnInit{
   // update bucket list name
   updateBucket(event, key, bucketName){
 
-    if(event.which == 13) {
-      this.bucketService.updateBucket(this.bucketId, bucketName).subscribe(response => {
-        if(JSON.stringify(response.messages).includes('Access Denied')){
-            this.logOutUser()
-        }
-        if(JSON.stringify(response.messages).includes('already exists')){
-            this.bucketResponse.bucketlists[key].name = this.bucketName;
-        }
-        Materialize.toast(
-          JSON.stringify(response.messages).replace(/[\]'_}"{[]/g, ' '), 5000);
-        jQuery('.modal').modal('close');
-      }, errors => {
-          Materialize.toast("Error connecting to the database", 5000);
-      });
-    }
+    this.bucketService.updateBucket(this.bucketId, bucketName).subscribe(response => {
+      if(JSON.stringify(response.messages).includes('Access Denied')){
+          this.logOutUser()
+      }
+      if(JSON.stringify(response.messages).includes('already exists')){
+          this.bucketResponse.bucketlists[key].name = this.bucketName;
+      }
+      Materialize.toast(
+        JSON.stringify(response.messages).replace(/[\]'_}"{[]/g, ' '), 5000);
+      jQuery('.modal').modal('close');
+    }, errors => {
+        Materialize.toast("Error connecting to the database", 5000);
+    });
   }
 
   // delete bucket
@@ -265,7 +263,7 @@ export class DashboardComponent implements AfterViewInit, OnInit{
       if(this.bucketResponse.messages == "create_item_success"){
         window.location.reload()
       }else{
-        this.errorMessages = JSON.stringify(this.bucketResponse.messages).replace(/[\]}"{[]/g, '')
+        this.errorMessages = JSON.stringify(this.bucketResponse.messages).replace(/['\]}"{[]/g, '')
         Materialize.toast(this.errorMessages, 5000);
       }
     }, errors => {
