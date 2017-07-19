@@ -18,6 +18,14 @@ nav a{
     display: none;
 }
 
+#bucket-submit{
+    font-size: 12px;
+    width: 150px;
+    height: 40px;
+    padding: 0;
+    margin-top: 10px;
+}
+
 .row label, .row a{
     color: #ffab40;
 }
@@ -28,7 +36,7 @@ nav a{
 #usersettingsmodal {height: 100% !important ; }
 #usersettingsmodal .row{ margin-bottom: 5px !important;}
 
-#search-submit, #update-bucket-submit{
+#search-submit{
     display: none;
 }
 

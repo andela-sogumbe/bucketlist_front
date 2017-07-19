@@ -60,9 +60,12 @@
 
     <div class="row">
         <form (ngSubmit)="newBucket()" #BucketForm="ngForm">
-            <div class="form-group input-field col s6">
+            <div class="form-group input-field col s4">
                 <input id="bucket" type="text" autocomplete="off" required [(ngModel)]="bucket" name="bucket" class="form-control validate">
-                <label for="bucket">New Bucket List</label>
+                <label for="bucket">New Bucket List (Press Enter to create)</label>
+            </div>
+            <div class="form-group input-field col s2">
+                <input type="submit" id="bucket-submit" value="Create Bucket List" class="btn waves-effect" name="bucket-submit">
             </div>
         </form>
         <form (ngSubmit)="searchBuckets()" #searchForm="ngForm">
@@ -113,11 +116,15 @@
                                     <h4>Update Bucket List</h4>
                                     <div class="updatebucketlistcontent">
                                         <form (ngSubmit)="updateBucket()" #UpdateBucketListForm="ngForm">
-                                            <div class="form-group input-field col s5">
-                                                <input (keyup)="updateBucket($event, key, bucketResponse.bucketlists[key].name)" id="bucketName-{{bucketResponse.bucketlists[key].id}}" type="text" autocomplete="off" required [(ngModel)]="bucketResponse.bucketlists[key].name" name="bucketName-{{bucketResponse.bucketlists[key].id}}" class="form-control validate">
-                                                <label for="bucketName-{{bucketResponse.bucketlists[key].id}}">New Bucket List Name</label>
+                                            <div class="row">
+                                                <div class="form-group input-field col s7">
+                                                    <input (keyup)="updateBucket($event, key, bucketResponse.bucketlists[key].name)" id="bucketName-{{bucketResponse.bucketlists[key].id}}" type="text" autocomplete="off" required [(ngModel)]="bucketResponse.bucketlists[key].name" name="bucketName-{{bucketResponse.bucketlists[key].id}}" class="form-control validate">
+                                                    <label for="bucketName-{{bucketResponse.bucketlists[key].id}}">New Bucket List Name</label>
+                                                </div>
+                                                <div class="form-group input-field col s2">
+                                                    <input type="submit" id="update-bucket-submit" value="Update Bucket List" class="btn waves-effect" name="update-bucket-submit">
+                                                </div>
                                             </div>
-                                            <input type="submit" id="update-bucket-submit" name="update-bucket-submit">
                                         </form>
                                     </div>
                                 </div>
@@ -185,9 +192,14 @@
             <h4>Add Item</h4>
             <div id="newitemcontent">
                 <form (ngSubmit)="createItem()" #NewItemForm="ngForm">
-                    <div class="form-group input-field col s5">
-                        <input id="itemName" type="text" autocomplete="off" required [(ngModel)]="itemName" name="itemName" class="form-control validate">
-                        <label for="newItem">New Item Name</label>
+                    <div class="row">
+                        <div class="form-group input-field col s5">
+                            <input id="itemName" type="text" autocomplete="off" required [(ngModel)]="itemName" name="itemName" class="form-control validate">
+                            <label for="newItem">New Item Name (Press Enter to create)</label>
+                        </div>
+                        <div class="form-group input-field col s1">
+                            <input type="submit" id="item-submit" value="Add Item" class="btn waves-effect" name="item-submit">
+                        </div>
                     </div>
                 </form>
             </div>

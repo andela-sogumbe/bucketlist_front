@@ -9,6 +9,10 @@ import { HomeComponent } from './components/home/home.component';
 const appRoutes: Routes = [
     {
         path: '',
+        component: LoginComponent,
+    },
+    {
+        path: 'home',
         component: HomeComponent,
     },
     {
